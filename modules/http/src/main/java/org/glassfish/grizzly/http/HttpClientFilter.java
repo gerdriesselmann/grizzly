@@ -102,6 +102,7 @@ public class HttpClientFilter extends HttpCodecFilter {
 
         contentEncodings.add(new GZipContentEncoding());
         contentEncodings.add(new LZMAContentEncoding());
+        contentEncodings.add(new DeflateContentEncoding());
     }
 
     @Override

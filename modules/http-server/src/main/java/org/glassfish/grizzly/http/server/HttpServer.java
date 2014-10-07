@@ -69,11 +69,8 @@ import org.glassfish.grizzly.attributes.AttributeBuilder;
 import org.glassfish.grizzly.filterchain.FilterChain;
 import org.glassfish.grizzly.filterchain.FilterChainBuilder;
 import org.glassfish.grizzly.filterchain.TransportFilter;
-import org.glassfish.grizzly.http.CompressionConfig;
+import org.glassfish.grizzly.http.*;
 import org.glassfish.grizzly.http.CompressionConfig.CompressionMode;
-import org.glassfish.grizzly.http.ContentEncoding;
-import org.glassfish.grizzly.http.GZipContentEncoding;
-import org.glassfish.grizzly.http.LZMAContentEncoding;
 import org.glassfish.grizzly.http.server.filecache.FileCache;
 import org.glassfish.grizzly.http.server.jmxbase.JmxEventListener;
 import org.glassfish.grizzly.impl.FutureImpl;
@@ -758,9 +755,17 @@ public class HttpServer {
             final ContentEncoding lzmaEncoding = new LZMAContentEncoding(
                     new CompressionEncodingFilter(compressionConfig,
                     LZMAContentEncoding.getLzmaAliases()));
-            final Set<ContentEncoding> set = new HashSet<ContentEncoding>(2);
+            final ContentEncoding deflateEncoding = new DeflateContentEncoding(
+                DeflateContentEncoding.DEFAULT_IN_BUFFER_SIZE,
+                DeflateContentEncoding.DEFAULT_OUT_BUFFER_SIZE,
+                new CompressionEncodingFilter(compressionConfig,
+                    DeflateContentEncoding.getDeflateAliases()));
+
+
+            final Set<ContentEncoding> set = new HashSet<ContentEncoding>(3);
             set.add(gzipContentEncoding);
             set.add(lzmaEncoding);
+            set.add(deflateEncoding);
             return set;
         } else {
             return Collections.emptySet();

@@ -43,33 +43,33 @@ package org.glassfish.grizzly.http;
 import org.glassfish.grizzly.Buffer;
 import org.glassfish.grizzly.Connection;
 import org.glassfish.grizzly.TransformationResult;
+import org.glassfish.grizzly.compression.deflate.DeflateEncoder;
+import org.glassfish.grizzly.compression.deflate.DeflateDecoder;
 import org.glassfish.grizzly.memory.Buffers;
-import org.glassfish.grizzly.compression.zip.GZipDecoder;
-import org.glassfish.grizzly.compression.zip.GZipEncoder;
 
 /**
- * GZip {@link ContentEncoding} implementation, which compresses/decompresses
- * HTTP content using gzip algorithm.
- * 
- * @author Alexey Stashok
+ * GZip {@link org.glassfish.grizzly.http.ContentEncoding} implementation, which compresses/decompresses
+ * HTTP content using deflate algorithm.
+ *
+ * @author Gerd Riesselmann
  */
-public class GZipContentEncoding implements ContentEncoding {
+public class DeflateContentEncoding implements ContentEncoding {
     public static final int DEFAULT_IN_BUFFER_SIZE = 512;
     public static final int DEFAULT_OUT_BUFFER_SIZE = 512;
 
-    private static final String[] ALIASES = {"gzip"};
+    private static final String[] ALIASES = {"deflate"};
 
-    public static final String NAME = "gzip";
-    
-    private final GZipDecoder decoder;
-    private final GZipEncoder encoder;
+    public static final String NAME = "deflate";
+
+    private final DeflateDecoder decoder;
+    private final DeflateEncoder encoder;
 
     private final EncodingFilter encoderFilter;
-    
+
     /**
      * Construct <tt>GZipContentEncoding</tt> using default buffer sizes.
      */
-    public GZipContentEncoding() {
+    public DeflateContentEncoding() {
         this(DEFAULT_IN_BUFFER_SIZE, DEFAULT_OUT_BUFFER_SIZE);
     }
 
@@ -78,7 +78,7 @@ public class GZipContentEncoding implements ContentEncoding {
      * @param inBufferSize input buffer size
      * @param outBufferSize output buffer size
      */
-    public GZipContentEncoding(int inBufferSize, int outBufferSize) {
+    public DeflateContentEncoding(int inBufferSize, int outBufferSize) {
         this(inBufferSize, outBufferSize, null);
     }
 
@@ -86,14 +86,14 @@ public class GZipContentEncoding implements ContentEncoding {
      * Construct <tt>GZipContentEncoding</tt> using specific buffer sizes.
      * @param inBufferSize input buffer size
      * @param outBufferSize output buffer size
-     * @param encoderFilter {@link EncodingFilter}, which will decide if
+     * @param encoderFilter {@link org.glassfish.grizzly.http.EncodingFilter}, which will decide if
      *          <tt>GZipContentEncoding</tt> should be applied to encode specific
-     *          {@link HttpHeader} packet.
+     *          {@link org.glassfish.grizzly.http.HttpHeader} packet.
      */
-    public GZipContentEncoding(int inBufferSize, int outBufferSize,
-            EncodingFilter encoderFilter) {
-        this.decoder = new GZipDecoder(inBufferSize);
-        this.encoder = new GZipEncoder(outBufferSize);
+    public DeflateContentEncoding(int inBufferSize, int outBufferSize,
+                                  EncodingFilter encoderFilter) {
+        this.decoder = new DeflateDecoder(inBufferSize);
+        this.encoder = new DeflateEncoder(outBufferSize);
 
         if (encoderFilter != null) {
             this.encoderFilter = encoderFilter;
@@ -122,7 +122,7 @@ public class GZipContentEncoding implements ContentEncoding {
         return ALIASES.clone();
     }
     
-    public static String[] getGzipAliases() {
+    public static String[] getDeflateAliases() {
         return ALIASES.clone();
     }
 
@@ -166,7 +166,7 @@ public class GZipContentEncoding implements ContentEncoding {
                 }
 
                 case ERROR: {
-                    throw new IllegalStateException("GZip decode error. Code: "
+                    throw new IllegalStateException("Deflate decode error. Code: "
                             + result.getErrorCode() + " Description: "
                             + result.getErrorDescription());
                 }
@@ -217,7 +217,7 @@ public class GZipContentEncoding implements ContentEncoding {
                 }
 
                 case ERROR: {
-                    throw new IllegalStateException("GZip decode error. Code: "
+                    throw new IllegalStateException("Deflate encode error. Code: "
                             + result.getErrorCode() + " Description: "
                             + result.getErrorDescription());
                 }
@@ -239,7 +239,7 @@ public class GZipContentEncoding implements ContentEncoding {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final GZipContentEncoding other = (GZipContentEncoding) obj;
+        final DeflateContentEncoding other = (DeflateContentEncoding) obj;
         return getName().equals(other.getName());
 
     }
